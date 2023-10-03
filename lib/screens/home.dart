@@ -13,9 +13,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
 
   @override
+  void initState() {
+    _foundToDo = todosList;
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tdBGColor,
@@ -43,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      for (ToDo todo in todosList)
+                      for (ToDo todo in _foundToDo.reversed)
                         TodoItem(
                           todo: todo,
                           onToDoChanged: _handleToDoChange,
@@ -132,6 +138,22 @@ class _HomeScreenState extends State<HomeScreen> {
     _todoController.clear();
   }
 
+  void _runFilter(String enteredKeyword) {
+    List<ToDo> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = todosList;
+    } else {
+      results = todosList
+          .where((item) => item.todoText
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      _foundToDo = results;
+    });
+  }
+
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
@@ -156,27 +178,28 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-Widget searchBox() {
-  return Container(
-    padding: const EdgeInsets.only(left: 10),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: const TextField(
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(0),
-          prefixIcon: Icon(
-            Icons.search,
-            color: tdBlack,
-            size: 20,
-          ),
-          prefixIconConstraints: BoxConstraints(maxHeight: 20, maxWidth: 30),
-          border: InputBorder.none,
-          hintText: 'Search',
-          hintStyle: TextStyle(color: tdGrey)),
-    ),
-  );
+  Widget searchBox() {
+    return Container(
+      padding: const EdgeInsets.only(left: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        onChanged: (value) => _runFilter(value),
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(0),
+            prefixIcon: Icon(
+              Icons.search,
+              color: tdBlack,
+              size: 20,
+            ),
+            prefixIconConstraints: BoxConstraints(maxHeight: 20, maxWidth: 30),
+            border: InputBorder.none,
+            hintText: 'Search',
+            hintStyle: TextStyle(color: tdGrey)),
+      ),
+    );
+  }
 }
