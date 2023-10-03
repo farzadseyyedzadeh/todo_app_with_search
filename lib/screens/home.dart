@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:todo_app_with_search/constants/colors.dart';
 import 'package:todo_app_with_search/widgets/todo_item.dart';
 
+import '../model/todo.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  final todosList = ToDo.todoList();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
